@@ -4,19 +4,17 @@ from utils import time_it
 
 
 @time_it("work")
-def do_work() -> int:
+def do_work():
     x = 0
     for _ in range(10_000_000):
         x += 1
 
 
+@time_it("main")
 def main():
-    with time_it("main"):
-        with concurrent.futures.ThreadPoolExecutor(4) as pool:
-            futures = [pool.submit(do_work) for _ in range(10)]
-            concurrent.futures.wait(futures)
-
-    return 0
+    with concurrent.futures.ThreadPoolExecutor(4) as pool:
+        futures = [pool.submit(do_work) for _ in range(10)]
+        concurrent.futures.wait(futures)
 
 
 if __name__ == "__main__":

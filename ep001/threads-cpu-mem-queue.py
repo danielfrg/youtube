@@ -9,7 +9,7 @@ q = queue.Queue()
 
 
 @time_it("work")
-def do_work() -> int:
+def do_work():
     x = 0
     for _ in range(1_000_000):
         x += 1
@@ -27,21 +27,21 @@ def update_counter():
         q.task_done()
 
 
+@time_it("main")
 def main():
-    with time_it("main"):
-        # Start a thread to consume from the queue and update the counter
-        consumer_thread = threading.Thread(target=update_counter)
-        consumer_thread.start()
+    # Start a thread to consume from the queue and update the counter
+    consumer_thread = threading.Thread(target=update_counter)
+    consumer_thread.start()
 
-        with concurrent.futures.ThreadPoolExecutor(5) as pool:
-            futures = [pool.submit(do_work) for _ in range(10)]
-            concurrent.futures.wait(futures)
+    with concurrent.futures.ThreadPoolExecutor(5) as pool:
+        futures = [pool.submit(do_work) for _ in range(10)]
+        concurrent.futures.wait(futures)
 
-        # Signal the consumer thread to stop
-        q.put(None)
+    # Signal the consumer thread to stop
+    q.put(None)
 
-        # Wait for the consumer thread to finish
-        consumer_thread.join()
+    # Wait for the consumer thread to finish
+    consumer_thread.join()
 
     return counter
 

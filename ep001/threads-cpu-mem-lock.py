@@ -9,7 +9,7 @@ lock = threading.Lock()
 
 
 @time_it("work")
-def do_work() -> int:
+def do_work():
     global counter
 
     x = 0
@@ -20,11 +20,11 @@ def do_work() -> int:
         counter += x
 
 
-def main() -> int:
-    with time_it("main"):
-        with concurrent.futures.ThreadPoolExecutor(5) as pool:
-            futures = [pool.submit(do_work) for _ in range(10)]
-            concurrent.futures.wait(futures)
+@time_it("main")
+def main():
+    with concurrent.futures.ThreadPoolExecutor(5) as pool:
+        futures = [pool.submit(do_work) for _ in range(10)]
+        concurrent.futures.wait(futures)
 
     return counter
 
