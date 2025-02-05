@@ -5,14 +5,14 @@ from utils import time_it
 
 
 @time_it("work")
-def do_work():
+def work():
     time.sleep(1)
 
 
-@time_it("main")
+@time_it("-- main")
 def main():
-    with concurrent.futures.ThreadPoolExecutor(3) as pool:
-        futures = [pool.submit(do_work) for _ in range(10)]
+    with concurrent.futures.ThreadPoolExecutor(2) as pool:
+        futures = [pool.submit(work) for _ in range(10)]
         concurrent.futures.wait(futures)
 
 
