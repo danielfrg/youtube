@@ -27,7 +27,7 @@ def update_counter():
         q.task_done()
 
 
-@time_it("-- main")
+@time_it("- main")
 def main():
     # Start a thread to consume from the queue and update the counter
     consumer_thread = threading.Thread(target=update_counter)

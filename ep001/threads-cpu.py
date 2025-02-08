@@ -10,7 +10,7 @@ def work():
         x += 1
 
 
-@time_it("-- main")
+@time_it("- main")
 def main():
     with concurrent.futures.ThreadPoolExecutor(2) as pool:
         futures = [pool.submit(work) for _ in range(10)]

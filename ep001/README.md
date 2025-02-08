@@ -1,6 +1,6 @@
 # Python 3.13t
 
-Python does have real threads
+Python does have real threads.
 
 ```
 python threads-io.py
@@ -9,7 +9,6 @@ python threads-io.py
 pstree <pid>
 ```
 
-
 Install free-threaded version with uv:
 
 ```
@@ -17,7 +16,6 @@ uv python list
 
 uv python install cpython-3.13.1+freethreaded-linux-x86_64-gnu
 ```
-
 
 If we run the io code again in both version of python:
 
