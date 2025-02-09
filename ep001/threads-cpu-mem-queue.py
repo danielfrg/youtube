@@ -33,7 +33,7 @@ def main():
     consumer_thread = threading.Thread(target=update_counter)
     consumer_thread.start()
 
-    with concurrent.futures.ThreadPoolExecutor(5) as pool:
+    with concurrent.futures.ThreadPoolExecutor(2) as pool:
         futures = [pool.submit(work) for _ in range(10)]
         concurrent.futures.wait(futures)
 
