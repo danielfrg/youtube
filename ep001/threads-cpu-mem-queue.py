@@ -11,7 +11,7 @@ q = queue.Queue()
 @time_it("work")
 def work():
     x = 0
-    for _ in range(1_000_000):
+    for _ in range(10_000_000):
         x += 1
 
     q.put(x)
