@@ -18,4 +18,9 @@ def main():
 
 
 if __name__ == "__main__":
+    print("one run:")
+    work()
+
+    print("-----")
+    print("with thread run:")
     main()
