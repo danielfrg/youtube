@@ -96,6 +96,7 @@ def checkpoint(
                             state = StateClass(**data["state"])
                         else:
                             state = None
+
                         ckpt = Checkpoint(
                             state=state,
                             start_from=data["last_item"],

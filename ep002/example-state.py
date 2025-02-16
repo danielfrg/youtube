@@ -16,12 +16,12 @@ N = 10
 def work(state: State, ckpt: Checkpoint):
     if ckpt.status == "done":
         print("Work already done")
-        return
+        return state
 
     print("Starting work from", ckpt.start_from)
     for i in range(ckpt.start_from, N):
         # do work
-        # time.sleep(0.5)
+        time.sleep(0.5)
 
         state.count = state.count + 1
         print("Processed:", i)
