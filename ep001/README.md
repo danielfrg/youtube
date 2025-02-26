@@ -51,3 +51,5 @@ What if we had some CPU work? Run `threads-cpu-mem.py`
 
 We can see that the results with 3.13t is not correct. Even worst, everytime is
 different!
+
+We can fix that with locks and queues.
