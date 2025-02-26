@@ -1,6 +1,6 @@
 # Python 3.13t
 
-Video (in spanish): https://www.youtube.com/watch?v=Tq9DX2Ov8N4&t=4s
+Video (in spanish): https://www.youtube.com/watch?v=Tq9DX2Ov8N4
 
 Python does have real threads.
 
