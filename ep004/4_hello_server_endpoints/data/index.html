@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 LED Control Panel</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <script>
+        function turnOn() {
+            fetch('/api/on', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ action: 'on' }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        function turnOff() {
+            fetch('/api/off', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ action: 'off' }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</head>
+<body class="bg-[#151E27] h-screen flex items-center justify-center">
+    <svg aria-hidden="true" class="pointer-events-none [z-index:-1] absolute inset-0 h-full w-full fill-blue-500/50 stroke-blue-500/50 opacity-[.30]" style="visibility: visible;"><defs><pattern id=":r2i:" width="20" height="20" patternUnits="userSpaceOnUse" x="-1" y="-1"><path d="M.5 20V.5H20" fill="none" stroke-dasharray="0"></path></pattern></defs><rect width="100%" height="100%" stroke-width="0" fill="url(#:r2i:)"></rect></svg>
+    <div class="container mx-auto px-4 py-8 max-w-md">
+        <div class="bg-gray-900 rounded-xl shadow-lg overflow-hidden p-8 border border-blue-500/30">
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-blue-400 mb-4">ESP32 LED Control Panel</h1>
+                <div class="flex items-center justify-center bg-gray-800 rounded-lg p-6 mt-6 border border-blue-500/20">
+                    <div class="text-center">
+                        <p class="text-gray-400 mb-3">Current Status</p>
+                        <span id="status-indicator" class="text-blue-300 font-medium">{{LED_STATE}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mt-8">
+                <button onclick="turnOn()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200 ease-in-out shadow-md">
+                    Turn On
+                </button>
+                <button onclick="turnOff()" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-200 ease-in-out shadow-md">
+                    Turn Off
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
