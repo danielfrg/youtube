@@ -4,6 +4,7 @@
 
 #include "esp_http_server.h"
 #include "esp_log.h"
+#include "driver/gpio.h"
 
 #define LED_PIN GPIO_NUM_2
 
@@ -89,6 +90,10 @@ static esp_err_t api_off_post_handler(httpd_req_t *req) {
 }
 
 httpd_handle_t start_webserver(void) {
+  // Set LED pin as output
+  gpio_reset_pin(LED_PIN);
+  gpio_set_direction(LED_PIN, GPIO_MODE_OUTPUT);
+
   httpd_handle_t server = NULL;
   httpd_config_t config = HTTPD_DEFAULT_CONFIG();
   config.server_port = 80;

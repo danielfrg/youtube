@@ -55,11 +55,6 @@ void app_main(void) {
   // Initialize WiFi
   wifi_init_sta();
 
-  // Set LED pin as output and ON
-  gpio_reset_pin(LED_PIN);
-  gpio_set_direction(LED_PIN, GPIO_MODE_OUTPUT);
-  gpio_set_level(LED_PIN, true);
-
   // Mount LittleFS (the image is generated at build time from the 'data'
   // directory)
   ret = mount_littlefs();
