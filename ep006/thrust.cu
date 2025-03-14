@@ -10,9 +10,17 @@
 #include <thrust/transform.h>
 #include <vector>
 
+float compute(const std::vector<float> &a, const std::vector<float> &b) {
+  float max_diff = 0.0f;
+  for (size_t i = 0; i < a.size(); i++) {
+    max_diff = std::max(max_diff, std::abs(a[i] - b[i]));
+  }
+  return max_diff;
+}
+
 int main() {
   // Data gen
-  size_t size = 5 * (1 << 28);
+  size_t size = 1 * (1 << 28);
   std::vector<float> a(size);
   std::vector<float> b(size);
 
@@ -45,20 +53,15 @@ int main() {
   thrust::device_vector<float> d_diff(size);
 
   auto transfer_end = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double> transfer_elapsed = transfer_end - transfer_start;
+  std::chrono::duration<double> transfer_elapsed =
+      transfer_end - transfer_start;
   std::printf("Time: Data transfer to GPU: %.6f s\n", transfer_elapsed.count());
 
   // Compute on GPU
   std::printf("Calculating on GPU...\n");
   auto start = std::chrono::high_resolution_clock::now();
 
-  // Compute absolute differences
-  thrust::transform(
-      thrust::cuda::par, d_a.begin(), d_a.end(), d_b.begin(), d_diff.begin(),
-      [] __host__ __device__(float x, float y) { return std::abs(x - y); });
-
-  float max_diff = thrust::reduce(thrust::cuda::par, d_diff.begin(),
-                                  d_diff.end(), 0.0f, thrust::maximum<float>());
+  float max_diff = compute(a, b);
 
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> elapsed = end - start;

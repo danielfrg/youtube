@@ -102,9 +102,32 @@ void reduceMax(const float *d_in, float *h_out, size_t N, int blockSize) {
   CUDA_CHECK(cudaFree(d_partialMax));
 }
 
+float compute(float *d_A, float *d_B, size_t size) {
+  // Allocate device memory for result
+  float *d_C = nullptr;
+  CUDA_CHECK(cudaMalloc(&d_C, size * sizeof(float)));
+
+  // Launch abs-diff kernel
+  const int BLOCK_SIZE = 256;
+  int gridSize = (int)((size + BLOCK_SIZE - 1) / BLOCK_SIZE);
+
+  absDiffKernel<<<gridSize, BLOCK_SIZE>>>(d_A, d_B, d_C, size);
+  CUDA_CHECK(cudaGetLastError());
+  CUDA_CHECK(cudaDeviceSynchronize());
+
+  // Reduce to find maximum
+  float max_diff = 0.0f;
+  reduceMax(d_C, &max_diff, size, BLOCK_SIZE);
+
+  // Clean up
+  CUDA_CHECK(cudaFree(d_C));
+
+  return max_diff;
+}
+
 int main() {
   // Data Gen
-  size_t size = 5 * (1 << 28);
+  size_t size = 1 * (1 << 28);
   std::vector<float> h_A(size);
   std::vector<float> h_B(size);
 
@@ -150,24 +173,14 @@ int main() {
 
   // Launch abs-diff kernel
   std::printf("Calculating...\n");
-  auto start_kernel = std::chrono::high_resolution_clock::now();
-  const int BLOCK_SIZE = 256;
-  int gridSize = (int)((size + BLOCK_SIZE - 1) / BLOCK_SIZE);
+  auto start = std::chrono::high_resolution_clock::now();
 
-  absDiffKernel<<<gridSize, BLOCK_SIZE>>>(d_A, d_B, d_C, size);
-  CUDA_CHECK(cudaGetLastError());
-  CUDA_CHECK(cudaDeviceSynchronize());
+  float max_diff = compute(d_A, d_B, size);
 
-  // Reduce to find maximum
-  float max_diff = 0.0f;
-  reduceMax(d_C, &max_diff, size, BLOCK_SIZE);
+  auto end = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> elapsed = end - start;
+  std::printf("Time: Compute: %.6f s\n", elapsed.count());
 
-  auto end_kernel = std::chrono::high_resolution_clock::now();
-  double time_kernel =
-      std::chrono::duration<double>(end_kernel - start_kernel).count();
-
-  std::printf("Time: Kernel + reduction: %.6f s\n", time_kernel);
-  std::printf("Time: Compute: %.6f s\n", time_copy + time_kernel);
   std::printf("Max difference: %.6f\n", max_diff);
 
   CUDA_CHECK(cudaFree(d_A));

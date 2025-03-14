@@ -5,9 +5,17 @@
 #include <random>
 #include <vector>
 
+float compute(const std::vector<float> &a, const std::vector<float> &b) {
+  float max_diff = 0.0f;
+  for (size_t i = 0; i < a.size(); i++) {
+    max_diff = std::max(max_diff, std::abs(a[i] - b[i]));
+  }
+  return max_diff;
+}
+
 int main() {
   // Data gen
-  size_t size = 5 * (1 << 28);
+  size_t size = 1 * (1 << 28);
   std::vector<float> a(size);
   std::vector<float> b(size);
 
@@ -35,14 +43,11 @@ int main() {
   std::printf("Calculating on CPU...\n");
   auto start = std::chrono::high_resolution_clock::now();
 
-  float max_diff = 0.0f;
-  for (size_t i = 0; i < size; i++) {
-    max_diff = std::max(max_diff, std::abs(a[i] - b[i]));
-  }
+  float max_diff = compute(a, b);
 
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> elapsed = end - start;
-  std::printf("Time: Compute: %.6f s\n", elapsed.count());
+  std::printf("Time: Compute (CPU): %.6f s\n", elapsed.count());
 
   std::printf("Max difference: %.6f\n", max_diff);
 
