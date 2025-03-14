@@ -10,11 +10,21 @@
 #include <thrust/transform.h>
 #include <vector>
 
-float compute(const std::vector<float> &a, const std::vector<float> &b) {
-  float max_diff = 0.0f;
-  for (size_t i = 0; i < a.size(); i++) {
-    max_diff = std::max(max_diff, std::abs(a[i] - b[i]));
-  }
+// GPU version of compute function
+float compute(const thrust::device_vector<float> &a,
+              const thrust::device_vector<float> &b) {
+
+  // Create a temporary vector to store the absolute differences
+  thrust::device_vector<float> diff(a.size());
+
+  // Calculate absolute differences between corresponding elements
+  thrust::transform(thrust::device, a.begin(), a.end(), b.begin(), diff.begin(),
+                    [] __device__(float x, float y) { return fabsf(x - y); });
+
+  // Find the maximum difference using reduction
+  float max_diff = thrust::reduce(thrust::device, diff.begin(), diff.end(),
+                                  0.0f, thrust::maximum<float>());
+
   return max_diff;
 }
 
@@ -61,7 +71,7 @@ int main() {
   std::printf("Calculating on GPU...\n");
   auto start = std::chrono::high_resolution_clock::now();
 
-  float max_diff = compute(a, b);
+  float max_diff = compute(d_a, d_b);
 
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> elapsed = end - start;
